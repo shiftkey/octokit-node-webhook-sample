@@ -7,7 +7,11 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var uuid = require('uuid');
 
+var GitHub = require('octocat');
+
 var authRoutes = require('./routes/auth');
+var hookRoutes = require('./routes/hook');
+var webhookRoutes = require('./routes/webhook');
 
 var app = express();
 
@@ -41,6 +45,8 @@ app.use(session({
 }));
 
 app.use('/', authRoutes);
+app.use('/', hookRoutes);
+app.use('/', webhookRoutes);
 
 app.get('/', function (req, res) {
 
@@ -61,8 +67,37 @@ app.get('/', function (req, res) {
 app.get('/home', function (req, res) {
 
   if (req.session.token) {
-    res.render('home', { name: req.session.name });
-    return;
+
+    // use this token to get the current repos for the user
+    var client = new GitHub({
+        token: req.session.token
+    });
+
+    var repos = [ ];
+
+    client.me().repos().then(
+      function(page) {
+        page.all()
+            .then(results => {
+              for (var i = 0; i < results.length; i++)
+              {
+                var repo = results[i];
+                repos.push({ full_name: repo.full_name, url: repo.url });
+              }
+            })
+            .then(results => {
+                res.render('home', { name: req.session.name, repos: repos });
+            })
+            .catch(error => {
+              // something happened when trying to verify the token, skipping
+              console.log("Unable to get repositories for user: " + error);
+              // clearing token as well to prevent infinite loop
+              req.session.token = null;
+              req.session.name = null;
+              res.redirect('/');
+            });
+      });
+      return;
   }
 
   console.log("No token found, sending to authentication endpoint...")

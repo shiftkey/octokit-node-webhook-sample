@@ -19,6 +19,7 @@ to define these environment variables before the website will run successfully:
 
  - `GITHUB_CLIENT_ID`
  - `GITHUB_CLIENT_SECRET`
+ - `GITHUB_PERSONAL_ACCESS_TOKEN`
  - `OAUTH_CALLBACK_URL` - this is the fully-qualified URL to your server
 
 ## The Next Step

@@ -15,7 +15,7 @@ var oauth2 = require('simple-oauth2')({
 // Authorization uri definition
 var authorization_uri = oauth2.authCode.authorizeURL({
   redirect_uri: process.env.OAUTH_CALLBACK_URL,
-  scope: 'notifications', // TODO: let's tweak this later
+  scope: 'repo write:repo_hook',
   state: '3(#0/!~'
 });
 

@@ -2,6 +2,8 @@ extends layout
 
 block content
   p Welcome @#{name}!
-  p Here is a rabbit!
-  p
-    img(src='/rabbit.jpg')
+  p Here are your repositories. Click one to setup the necessary web hooks.
+  ul
+  each repo in repos
+    li
+      a(href='/repo/#{repo.full_name}') #{repo.full_name}

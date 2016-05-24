@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  p For repository #{full_name}!
+  if exists
+    p
+      Webhook found - &nbsp;
+      a(href='/repo/#{full_name}/delete') Delete?
+  else
+    p
+      Webhook not found - &nbsp;
+      a(href='/repo/#{full_name}/create') Create?
